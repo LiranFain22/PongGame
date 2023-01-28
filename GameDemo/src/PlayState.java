@@ -3,6 +3,7 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.Timer;
 
@@ -14,7 +15,9 @@ public class PlayState extends GameState {
 	Ball gameBall;
 	Paddle userPaddle;
 	Paddle pcPaddle;
-	String winner;
+	static String WINNER;
+	ArrayList<String> userLives;
+	ArrayList<String> pcLives;
 	
 	private int userScore, pcScore, bounceCount;
 	
@@ -26,8 +29,18 @@ public class PlayState extends GameState {
 	    pcPaddle = new Paddle(610, 200, 75, 3, Color.RED);
 	    userScore = 0; 
 	    pcScore = 0;
+	    initLives();
 	}
 	
+	private void initLives() {
+		userLives = new ArrayList<>();
+		pcLives = new ArrayList<>();
+		
+		for(int i = 0; i < 3; i++) {
+			userLives.add("♥");
+			pcLives.add("♥");
+		}
+	}
 
 	public void enter(Object memento) {
 		active = true;
@@ -38,8 +51,6 @@ public class PlayState extends GameState {
 		if (aKeyCode == KeyEvent.VK_ESCAPE)
 			System.exit(0);
 		
-		if (aKeyCode == KeyEvent.VK_Q)
-			active = false;
 		
 		if (aKeyCode == KeyEvent.VK_UP) {
 			userPaddle.moveTowards(0);
@@ -86,22 +97,30 @@ public class PlayState extends GameState {
 	  //check if someone lost
 	    if(gameBall.getX() < 0){
 	        //player has lost
-	        pcScore++;
+	        userLives.remove(0);
 	        reset();
 	    }
 	    else if(gameBall.getX() > Game.WIDTH){
 	        //PC has lost
-	        userScore++;
+	        pcLives.remove(0);
 	        reset();
 	    }
 	    
 	  //check if ball collides with either paddle
-	    if(pcPaddle.checkCollision(gameBall) || userPaddle.checkCollision(gameBall)){
+	    if(pcPaddle.checkCollision(gameBall)){
 	        //reverse ball if they collide
 	        gameBall.reverseX();
 	        //increase the bounce count
 	        bounceCount++;
-	    }
+	        pcScore++;
+	        
+	    } else if(userPaddle.checkCollision(gameBall)) {
+	    	//reverse ball if they collide
+	        gameBall.reverseX();
+	        //increase the bounce count
+	        bounceCount++;
+	        userScore++;
+	    } 
 
 	    //after 5 bounces
 	    if (bounceCount == 5){
@@ -111,19 +130,23 @@ public class PlayState extends GameState {
 	        gameBall.increaseSpeed();
 	    }
 	    
-	    if (userScore == 5) {
-	    	winner = "YOU WON!";
+	    if (pcLives.size() == 0) {
+	    	WINNER = "YOU WON!";
+	    	initLives();
+	    	active = false;
 	    }
 	    
-	    if (pcScore == 5) {
-	    	winner = "YOU LOST! TRY AGAIN.";
+	    if (userLives.size() == 0) {
+	    	WINNER = "YOU LOST! TRY AGAIN.";
+	    	initLives();
+	    	active = false;
 	    }
 	}
 	
 	public boolean isActive() { return active; }
 	
 	public String next() {
-		return "Welcome";
+		return "GameOver";
 	}
 	
 	public void reset(){
@@ -156,12 +179,9 @@ public class PlayState extends GameState {
 	    
 	  //update score
 	    g.setColor(Color.WHITE);
-	    //the drawString method needs a String to print, and a location to print it at.
-	    g.drawString("Score - User [ " + userScore + " ]   PC [ " + pcScore + " ]", 250, 20   );
+	    g.drawString("Lives -  " + userLives + " ", 20, 20   );
+	    g.drawString("Lives -  " + pcLives + " ", 500, 20   );
 	    
-//		g.drawOval((int)x, 100, 10, 10);
-//		message = "" + (int)deltaTimeAverage;
-//		g.drawString(message, 10, 10);
 
 	}
 
