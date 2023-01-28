@@ -2,13 +2,12 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 public class Ball {
-	//declare instance variables
+
     private int x, y, cx, cy, speed, size;
     private Color color;
     
     static final int MAX_SPEED = 7;
 
-	//ball constructor assigns values to instance variables
     public Ball(int x, int y, int cx, int cy, int speed, Color color, int size) {
         this.x = x;
         this.y = y;
@@ -57,12 +56,10 @@ public class Ball {
     }
     
     public void increaseSpeed(){
-        //make sure current speed is less than max speed before incrementing
-        if(speed < MAX_SPEED){
-            //increase the speed by one
-            speed ++;
 
-            //alternative way to do it
+        if(speed < MAX_SPEED){
+            speed++;
+
             if(cx > 0){
                 cx = speed;
             }
@@ -78,7 +75,6 @@ public class Ball {
         }
     }
     
-  //getter in Ball class
   	public int getY(){
           return y;
       }
@@ -112,11 +108,7 @@ public class Ball {
 	}
 
 	public void paint(Graphics g){
-
-        //set the brush color to the ball color
         g.setColor(color);
-
-        //paint the ball at x, y with a width and height of the ball size
         g.fillOval(x, y, size, size);
 
     }

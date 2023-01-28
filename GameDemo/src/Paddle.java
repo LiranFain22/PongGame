@@ -1,12 +1,9 @@
 import java.awt.*;
 
 public class Paddle {
-	
-	//declare instance variables
     private int height, x, y, speed;
     private Color color;
 
-    //constant
     static final int PADDLE_WIDTH = 15;
 
     /**
@@ -74,8 +71,6 @@ public class Paddle {
      * @param g graphics object passed from calling method
      */
     public void paint(Graphics g){
-
-        //paint the rectangle for the paddle
         g.setColor(color);
         g.fillRect(x, y, PADDLE_WIDTH, height);
 
